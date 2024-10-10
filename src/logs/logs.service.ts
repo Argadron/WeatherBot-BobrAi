@@ -10,7 +10,11 @@ export class LogsService {
         return await this.prismaService.log.findFirst({
             where: {
                 telegramId: id
-            }
+            },
+            orderBy: {
+                createdAt: 'desc',
+              },
+            take: 1,
         })
     }
 
