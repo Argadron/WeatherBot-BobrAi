@@ -64,7 +64,7 @@ export class TelegramUpdate {
                 await this.logsService.create({
                     botAnswer: answerString,
                     telegramId: ctx.from.id,
-                    command: msg
+                    command: `${msg} ${weather.city}`
                 })
 
                 await ctx.reply(answerString)
