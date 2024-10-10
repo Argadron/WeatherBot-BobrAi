@@ -12,3 +12,17 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Log {
+  id Int @id @default(autoincrement())
+
+  telegramId Int @map("telegram_id")
+  command String 
+  date DateTime
+  botAnswer String @map("bot_answer")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at") @updatedAt
+
+  @@map("log")
+}

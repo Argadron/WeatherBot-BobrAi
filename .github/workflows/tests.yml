@@ -1,0 +1,42 @@
+name: Tests
+on: 
+   push:
+      branches: [ main ]
+jobs: 
+   init: 
+     runs-on: ubuntu-latest
+     container: node:18.10.0
+     services: 
+       postgres: 
+         image: postgres
+         env:
+          POSTGRES_PASSWORD: postgres
+         ports:
+          - 5432:5432
+     strategy:
+       matrix: 
+         node-version: [ 18.x ]
+     steps: 
+        - uses: actions/checkout@v4
+        - name: Setup Node.js environment
+          uses: actions/setup-node@v3
+          with: 
+            node-version: ${{ matrix.node-version }}
+        - name: Setup environment variables
+          run: |
+            echo "HOST=${{ secrets.HOST }}" >> .env
+            echo "PORT=${{ secrets.PORT }}" >> .env
+            echo "API_CLIENT_URL=${{ secrets.API_CLIENT_URL }}" >> .env
+            echo "API_VERISON=${{ secrets.API_VERSION }}" >> .env
+            echo "TELEGRAM_API_KEY=${{ secrets.TELEGRAM_API_KEY }}" >> .env
+            echo "TELEGRAM_BOT_NAME=${{ secrets.TELEGRAM_BOT_NAME }}" >> .env
+        - name: Install dependencies
+          run: npm install
+        - name: Prisma db
+          run: npx prisma db push
+        - name: Building
+          run: npm run build
+        - name: Unit tests
+          run: npm run test
+        - name: E2E tests
+          run: npm run test:e2e
